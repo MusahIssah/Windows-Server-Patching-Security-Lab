@@ -1,0 +1,24 @@
+# Runtime artifacts and credentials are not publication artifacts.
+*.vhd
+*.vhdx
+*.avhdx
+*.vmdk
+*.iso
+*.msu
+*.cab
+*.exe
+*.zip
+*.log
+*.etl
+*.evtx
+*.dmp
+*.pem
+*.key
+*.pfx
+*.p12
+.env
+.env.*
+credentials*
+secrets*
+Thumbs.db
+desktop.ini

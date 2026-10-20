@@ -1,160 +1,89 @@
-# Published evidence
+# Windows Server Patching and Security Lab
 
-These screenshots support the recorded lab observations. Intermediate failures and earlier counts are retained as history; the final results are summarized in the [milestone report](../07-Final-Report/README.md).
+A personal Hyper-V lab demonstrating staged Windows Server patching, investigation of servicing failures, firewall logging, and domain time synchronization.
 
-Generic, unidentified screenshot filenames were omitted. Original files remain in the source archive. Three filenames with a doubled period before `.png` were normalized in this publication copy. Suggested filenames in historical records are not a guarantee that every capture was saved.
+**Current milestone: v0.1 — foundation, patching, and local monitoring baseline.** Further phases will extend this same repository.
 
-## Start here
+## Results demonstrated
 
-| Outcome | Evidence |
+- Built a four-server Windows Server 2022 domain with AD DS, DNS, WSUS, and Group Policy.
+- Deployed selected OS and .NET updates through Pilot, Broad, and Infrastructure groups.
+- Verified all four servers at OS build **20348.5761**, with their final recorded WSUS summaries showing **0 needed, 91 installed/not applicable, 0 errors, and 0 unknown** per server.
+- Investigated a DC01 update rollback using CBS, SetupAPI, package inventory, INF hashes, and DISM diagnostics; subsequently completed the update through a staged servicing path.
+- Enabled firewall logging through Group Policy on SRV01 and SRV02 and verified real log entries.
+- Verified member-server domain time selection after restarts and observed DC01 recover automatically from a startup DNS-resolution failure.
+
+The 91-update summaries cover the lab's selected WSUS catalog. They are **not** a complete vulnerability assessment or a formal compliance score. Results are recorded observations from October 2026, not a claim of perpetual patch currency.
+
+## Project phases
+
+| Phase | Scope | Status |
+|---|---|---|
+| 1 | Hyper-V networking, AD DS, DNS, WSUS, Group Policy | Completed; build summarized retrospectively |
+| 2 | Pilot, Broad, Infrastructure patch deployment and validation | Completed for selected updates |
+| 3 | Local firewall logging and domain time synchronization | Completed within the documented test scope |
+| 4 | Vulnerability scanning, prioritization, remediation, rescan | Planned |
+| 5 | Central log collection, alerts, recurring review | Planned |
+| 6 | Configuration Manager / MECM deployment | Planned |
+
+See the [roadmap](ROADMAP.md) for remaining work and milestone criteria.
+
+## Architecture
+
+| System | Address | Role | WSUS group |
+|---|---|---|---|
+| DC01 | 192.168.77.10 | AD DS, DNS, PDC Emulator | Infrastructure |
+| WSUS01 | 192.168.77.20 | WSUS, IIS, Windows Internal Database | Infrastructure |
+| SRV01 | 192.168.77.101 | Member server | Pilot |
+| SRV02 | 192.168.77.102 | Member server | Broad |
+
+Domain: `ad.northstar.test` · Hyper-V internal switch: `PatchLab-Internal` · Host gateway/NAT: `192.168.77.1`.
+
+```mermaid
+flowchart TD
+    Host[Hyper-V host / NAT 192.168.77.1] --- Switch[PatchLab-Internal / 192.168.77.0/24]
+    Switch --- DC[DC01 / AD DS + DNS / .10]
+    Switch --- WSUS[WSUS01 / .20]
+    Switch --- Pilot[SRV01 / Pilot / .101]
+    Switch --- Broad[SRV02 / Broad / .102]
+    WSUS -. Update approvals and reporting .-> Pilot
+    WSUS -. Update approvals and reporting .-> Broad
+    WSUS -. Infrastructure updates .-> DC
+```
+
+Details: [architecture](01-Architecture/README.md) and [build notes](02-Build-Notes/README.md).
+
+## Read the completed work
+
+| Area | Documentation |
 |---|---|
-| DC01 final update summary | [Zero needed](DC01-Infrastructure-Final-Zero-Needed.png) |
-| WSUS01 final update summary | [Zero needed](WSUS01-Infrastructure-Final-Zero-Needed.png) |
-| SRV01 final update summary | [Zero needed](SRV01-WSUS-Final-Zero-Needed.png) |
-| SRV02 final update summary | [Zero needed](SRV02-WSUS-Final-Zero-Needed.png) |
-| DC01 servicing investigation | [Driver failure](DC01-October-Tape-INF-DriverStore-Failure.png), [final successful installation](DC01-KB5126655-WSUS-Post-Restart-Verified.png) |
-| .NET deployment | [Both servers installed](NET-KB5128928-Both-Servers-Installed.png) |
-| Firewall logging | [Policy](Firewall-Logging-GPO-Settings.png), [Pilot verification](SRV01-Firewall-Logging-Pilot-Verified.png), [Broad traffic](SRV02-Firewall-Logging-Broad-Traffic.png) |
-| DC01 automatic time recovery | [Startup DNS failure](DC01-Time-Startup-DNS-Failure.png), [automatic recovery](DC01-Time-Automatic-Recovery-Verified.png) |
-| Member time selection after restart | [WSUS01](WSUS01-Domain-Time-After-Restart.png), [SRV01](SRV01-Domain-Time-After-Restart.png), [SRV02](SRV02-Domain-Time-After-Restart.png) |
+| Staged patching and delivery sources | [Change register](03-Patch-Management/README.md) |
+| Servicing rollback investigation | [DC01 case study](02-Build-Notes/DC01-Servicing-Investigation.md) |
+| Firewall policy and traffic validation | [LAB-CHG-006](05-Monitoring/LAB-CHG-006.md) |
+| Domain time configuration and restart testing | [LAB-CHG-009](05-Monitoring/LAB-CHG-009.md) |
+| Screenshots organized by outcome | [Evidence index](06-Evidence/README.md) |
+| Current results across the project | [Milestone report](07-Final-Report/README.md) |
 
-## Complete screenshot inventory
+### Example evidence
 
-Each link below points to a file included in this repository. Screenshots show point-in-time observations; filenames alone do not establish a successful outcome.
+DC01's final recorded Infrastructure summary:
 
-- [before-patching OS build.png](before-patching%20OS%20build.png)
-- [DC01-DISM-ScanHealth-No-Corruption.png](DC01-DISM-ScanHealth-No-Corruption.png)
-- [DC01-External-Time-Post-Restart-Verified.png](DC01-External-Time-Post-Restart-Verified.png)
-- [DC01-Infrastructure-Before-Deployment.png](DC01-Infrastructure-Before-Deployment.png)
-- [DC01-Infrastructure-Final-Zero-Needed.png](DC01-Infrastructure-Final-Zero-Needed.png)
-- [DC01-Initial-Managed-Scan.png](DC01-Initial-Managed-Scan.png)
-- [DC01-KB5030216-Downloaded.png](DC01-KB5030216-Downloaded.png)
-- [DC01-KB5030216-Post-Restart-Verified.png](DC01-KB5030216-Post-Restart-Verified.png)
-- [DC01-KB5122882-Downloaded.png](DC01-KB5122882-Downloaded.png)
-- [DC01-KB5122882-Installed-Restart-Required.png](DC01-KB5122882-Installed-Restart-Required.png)
-- [DC01-KB5122882-Offered.png](DC01-KB5122882-Offered.png)
-- [DC01-KB5122882-Post-Restart-Verified-01.png](DC01-KB5122882-Post-Restart-Verified-01.png)
-- [DC01-KB5122882-Post-Restart-Verified-02.png](DC01-KB5122882-Post-Restart-Verified-02.png)
-- [DC01-KB5126655-NotApplicable.png](DC01-KB5126655-NotApplicable.png)
-- [DC01-KB5126655-Offered-After-September.png](DC01-KB5126655-Offered-After-September.png)
-- [DC01-KB5126655-Servicing-Failure-01.png](DC01-KB5126655-Servicing-Failure-01.png)
-- [DC01-KB5126655-Servicing-Failure-02.png](DC01-KB5126655-Servicing-Failure-02.png)
-- [DC01-KB5126655-Servicing-Failure-03.png](DC01-KB5126655-Servicing-Failure-03.png)
-- [DC01-KB5126655-WSUS-Downloaded.png](DC01-KB5126655-WSUS-Downloaded.png)
-- [DC01-KB5126655-WSUS-Installed-Restart-Required.png](DC01-KB5126655-WSUS-Installed-Restart-Required.png)
-- [DC01-KB5126655-WSUS-Post-Restart-Verified.png](DC01-KB5126655-WSUS-Post-Restart-Verified.png)
-- [DC01-NET-KB5128928-Downloaded.png](DC01-NET-KB5128928-Downloaded.png)
-- [DC01-NET-KB5128928-Installed-Restart-Required.png](DC01-NET-KB5128928-Installed-Restart-Required.png)
-- [DC01-NET-Post-Restart-Validation.png](DC01-NET-Post-Restart-Validation.png)
-- [DC01-October-Driver-Installation-Failure.png](DC01-October-Driver-Installation-Failure.png)
-- [DC01-October-External-Time-Verified.png](DC01-October-External-Time-Verified.png)
-- [DC01-October-OS-Not-Offered-After-KB5030216.png](DC01-October-OS-Not-Offered-After-KB5030216.png)
-- [DC01-October-OS-Not-Offered.png](DC01-October-OS-Not-Offered.png)
-- [DC01-October-Post-Restart-Time-Source.png](DC01-October-Post-Restart-Time-Source.png)
-- [DC01-October-Standalone-Validation-Unsuccessful.png](DC01-October-Standalone-Validation-Unsuccessful.png)
-- [DC01-October-Tape-INF-DriverStore-Failure.png](DC01-October-Tape-INF-DriverStore-Failure.png)
-- [DC01-Patching-Before.png](DC01-Patching-Before.png)
-- [DC01-PDC-and-External-Time-Test.png](DC01-PDC-and-External-Time-Test.png)
-- [DC01-Prepatch-Time-Advertising-Failure.png](DC01-Prepatch-Time-Advertising-Failure.png)
-- [DC01-Tape-Driver-Import-Rejected.png](DC01-Tape-Driver-Import-Rejected.png)
-- [DC01-Tape-Driver-Inventory.png](DC01-Tape-Driver-Inventory.png)
-- [DC01-Tape-INF-Hash-Comparison.png](DC01-Tape-INF-Hash-Comparison.png)
-- [DC01-Time-Automatic-Recovery-Verified.png](DC01-Time-Automatic-Recovery-Verified.png)
-- [DC01-Time-Startup-Baseline-01.png](DC01-Time-Startup-Baseline-01.png)
-- [DC01-Time-Startup-Baseline-02.png](DC01-Time-Startup-Baseline-02.png)
-- [DC01-Time-Startup-DNS-Failure.png](DC01-Time-Startup-DNS-Failure.png)
-- [DC01-Time-Synchronization-and-Health-Verified.png](DC01-Time-Synchronization-and-Health-Verified.png)
-- [DC01-Time-Verified-After-Intermediate-Update.png](DC01-Time-Verified-After-Intermediate-Update.png)
-- [DC01-Time-Verified-After-KB5122882.png](DC01-Time-Verified-After-KB5122882.png)
-- [DC01-Update-History-Final.png](DC01-Update-History-Final.png)
-- [DC01-WSUS-Infrastructure-GPO-Link.png](DC01-WSUS-Infrastructure-GPO-Link.png)
-- [DC01-WSUS-Policy-Applied.png](DC01-WSUS-Policy-Applied.png)
-- [Firewall-Logging-GPO-Settings.png](Firewall-Logging-GPO-Settings.png)
-- [KB5030216-Infrastructure-Approval-Scope.png](KB5030216-Infrastructure-Approval-Scope.png)
-- [NET-KB5126149-Residual-Status.png](NET-KB5126149-Residual-Status.png)
-- [NET-KB5126149-Status-After-Refresh.png](NET-KB5126149-Status-After-Refresh.png)
-- [NET-KB5128928-Before-Deployment.png](NET-KB5128928-Before-Deployment.png)
-- [NET-KB5128928-Both-Servers-Installed.png](NET-KB5128928-Both-Servers-Installed.png)
-- [NET-Residual-Updates-Bottom.png](NET-Residual-Updates-Bottom.png)
-- [NET-September-October-Component-Packages.png](NET-September-October-Component-Packages.png)
-- [NET-September-Superseded-By-October.png](NET-September-Superseded-By-October.png)
-- [SRV01-After-NET-Status.png](SRV01-After-NET-Status.png)
-- [SRV01-Before-Patching.png](SRV01-Before-Patching.png)
-- [SRV01-Domain-Time-After-Restart.png](SRV01-Domain-Time-After-Restart.png)
-- [SRV01-Domain-Time-Peer-Before.png](SRV01-Domain-Time-Peer-Before.png)
-- [SRV01-Domain-Time-Verified.png](SRV01-Domain-Time-Verified.png)
-- [SRV01-Effective-Firewall-and-Build.png](SRV01-Effective-Firewall-and-Build.png)
-- [SRV01-Firewall-Logging-Before.png](SRV01-Firewall-Logging-Before.png)
-- [SRV01-Firewall-Logging-Pilot-Applied.png](SRV01-Firewall-Logging-Pilot-Applied.png)
-- [SRV01-Firewall-Logging-Pilot-Verified.png](SRV01-Firewall-Logging-Pilot-Verified.png)
-- [SRV01-KB5030216-Installing.png](SRV01-KB5030216-Installing.png)
-- [SRV01-KB5030216-Verified.png](SRV01-KB5030216-Verified.png)
-- [SRV01-KB5126655-Verified.png](SRV01-KB5126655-Verified.png)
-- [SRV01-KB5128928-Download-Verified.png](SRV01-KB5128928-Download-Verified.png)
-- [SRV01-KB5128928-History-Verified.png](SRV01-KB5128928-History-Verified.png)
-- [SRV01-KB5128928-RestartRequired.png](SRV01-KB5128928-RestartRequired.png)
-- [SRV01-KB5128928-WSUS-Verified.png](SRV01-KB5128928-WSUS-Verified.png)
-- [SRV01-Managed-Scan-No-Updates-Offered.png](SRV01-Managed-Scan-No-Updates-Offered.png)
-- [SRV01-Monitoring-Baseline.png](SRV01-Monitoring-Baseline.png)
-- [SRV01-NET-October-Component-Verified.png](SRV01-NET-October-Component-Verified.png)
-- [SRV01-NET-Update-Offered.png](SRV01-NET-Update-Offered.png)
-- [SRV01-Registered-Pending-Report.png](SRV01-Registered-Pending-Report.png)
-- [SRV01-Security-Baseline.png](SRV01-Security-Baseline.png)
-- [SRV01-ServicingStack-1960.png](SRV01-ServicingStack-1960.png)
-- [SRV01-Time-Baseline.png](SRV01-Time-Baseline.png)
-- [SRV01-WSUS-Final-Zero-Needed.png](SRV01-WSUS-Final-Zero-Needed.png)
-- [SRV02-After-NET-Status.png](SRV02-After-NET-Status.png)
-- [SRV02-Broad-Before-Patching.png](SRV02-Broad-Before-Patching.png)
-- [SRV02-Broad-Policy-and-Connectivity.png](SRV02-Broad-Policy-and-Connectivity.png)
-- [SRV02-Broad-Policy-and-Connectivity1.png](SRV02-Broad-Policy-and-Connectivity1.png)
-- [SRV02-Domain-Time-After-Restart.png](SRV02-Domain-Time-After-Restart.png)
-- [SRV02-Domain-Time-Peer-Before.png](SRV02-Domain-Time-Peer-Before.png)
-- [SRV02-Domain-Time-Verified.png](SRV02-Domain-Time-Verified.png)
-- [SRV02-Effective-Firewall-and-Build.png](SRV02-Effective-Firewall-and-Build.png)
-- [SRV02-Firewall-Logging-Before.png](SRV02-Firewall-Logging-Before.png)
-- [SRV02-Firewall-Logging-Broad-Applied.png](SRV02-Firewall-Logging-Broad-Applied.png)
-- [SRV02-Firewall-Logging-Broad-Traffic.png](SRV02-Firewall-Logging-Broad-Traffic.png)
-- [SRV02-KB5030216-Installed-RestartRequired.png](SRV02-KB5030216-Installed-RestartRequired.png)
-- [SRV02-KB5030216-Offered.png](SRV02-KB5030216-Offered.png)
-- [SRV02-KB5030216-PostRestart-Verified.png](SRV02-KB5030216-PostRestart-Verified.png)
-- [SRV02-KB5030216-WSUS-Verified.png](SRV02-KB5030216-WSUS-Verified.png)
-- [SRV02-KB5126655-Verified.png](SRV02-KB5126655-Verified.png)
-- [SRV02-KB5128928-Offered.png](SRV02-KB5128928-Offered.png)
-- [SRV02-KB5128928-PostRestart-Verified.png](SRV02-KB5128928-PostRestart-Verified.png)
-- [SRV02-KB5128928-RestartRequired.png](SRV02-KB5128928-RestartRequired.png)
-- [SRV02-Monitoring-Baseline.png](SRV02-Monitoring-Baseline.png)
-- [SRV02-NET-October-Component-Verified.png](SRV02-NET-October-Component-Verified.png)
-- [SRV02-Network-Profile-Verified.png](SRV02-Network-Profile-Verified.png)
-- [SRV02-October-WSUS-No-Offer.png](SRV02-October-WSUS-No-Offer.png)
-- [SRV02-Pending-Updates-Before-Broad-Deployment.png](SRV02-Pending-Updates-Before-Broad-Deployment.png)
-- [SRV02-Security-Baseline.png](SRV02-Security-Baseline.png)
-- [SRV02-WSUS-Final-Zero-Needed.png](SRV02-WSUS-Final-Zero-Needed.png)
-- [WSUS-KB5030216-Installed.png](WSUS-KB5030216-Installed.png)
-- [WSUS-KB5126655-Installed.png](WSUS-KB5126655-Installed.png)
-- [WSUS-October-Both-Servers-Installed.png](WSUS-October-Both-Servers-Installed.png)
-- [WSUS-Sync-91-Updates.png](WSUS-Sync-91-Updates.png)
-- [WSUS01-Domain-Time-After-Restart.png](WSUS01-Domain-Time-After-Restart.png)
-- [WSUS01-Domain-Time-Verified.png](WSUS01-Domain-Time-Verified.png)
-- [WSUS01-Infrastructure-Before-Deployment.png](WSUS01-Infrastructure-Before-Deployment.png)
-- [WSUS01-Infrastructure-Final-Zero-Needed.png](WSUS01-Infrastructure-Final-Zero-Needed.png)
-- [WSUS01-Infrastructure-Initial-Scan.png](WSUS01-Infrastructure-Initial-Scan.png)
-- [WSUS01-Infrastructure-Policy-Applied.png](WSUS01-Infrastructure-Policy-Applied.png)
-- [WSUS01-No-Pending-Packages.png](WSUS01-No-Pending-Packages.png)
-- [WSUS01-No-Update-Restart-Required.png](WSUS01-No-Update-Restart-Required.png)
-- [WSUS01-October-NET-Needed.png](WSUS01-October-NET-Needed.png)
-- [WSUS01-October-OS-Needed.png](WSUS01-October-OS-Needed.png)
-- [WSUS01-October-Post-Restart-Validation.png](WSUS01-October-Post-Restart-Validation.png)
-- [WSUS01-October-Update-History.png](WSUS01-October-Update-History.png)
-- [WSUS01-October-Updates-Downloaded.png](WSUS01-October-Updates-Downloaded.png)
-- [WSUS01-October-Updates-Installed-Restart-Required.png](WSUS01-October-Updates-Installed-Restart-Required.png)
-- [WSUS01-October-Updates-Offered.png](WSUS01-October-Updates-Offered.png)
-- [WSUS01-Packages-Pending-Restart.png](WSUS01-Packages-Pending-Restart.png)
-- [WSUS01-Post-Deployment-Managed-Scan.png](WSUS01-Post-Deployment-Managed-Scan.png)
-- [WSUS01-Post-Deployment-Reported-Error.png](WSUS01-Post-Deployment-Reported-Error.png)
-- [WSUS01-Post-Restart-Build-and-Packages.png](WSUS01-Post-Restart-Build-and-Packages.png)
-- [WSUS01-Post-Restart-Console.png](WSUS01-Post-Restart-Console.png)
-- [WSUS01-Post-Restart-Services-and-Trust.png](WSUS01-Post-Restart-Services-and-Trust.png)
-- [WSUS01-Reported-Error-Cleared.png](WSUS01-Reported-Error-Cleared.png)
-- [WSUS01-Time-Baseline.png](WSUS01-Time-Baseline.png)
-- [WSUS01-Time-Provider-Events-01.png](WSUS01-Time-Provider-Events-01.png)
-- [WSUS01-Time-Provider-Events-02.png](WSUS01-Time-Provider-Events-02.png)
+![DC01 WSUS summary showing zero needed updates and zero errors](06-Evidence/DC01-Infrastructure-Final-Zero-Needed.png)
+
+Pilot member-server time selection after a restart:
+
+![SRV01 selects DC01 as its time source after restart](06-Evidence/SRV01-Domain-Time-After-Restart.png)
+
+## Delivery methods and limitations
+
+The deployment sources are recorded explicitly: October's OS update used standalone Microsoft Catalog packages on SRV01/SRV02, while final October installation on WSUS01/DC01 succeeded through WSUS. The initial October detection issue on SRV01/SRV02 remains unexplained.
+
+DC01's earlier standalone October attempt rolled back during driver processing. Installing September and then retrying October succeeded, but this sequence does not prove a universal prerequisite or a driver repair. A rejected PnPUtil attempt added no packages.
+
+Time verification covers observed source selection and restarts, not a precision-time guarantee. Firewall validation covers local log generation on two servers; central collection and alerting are planned. No application workload was configured for application compatibility testing, and backup restoration was not tested.
+
+This repository publishes documentation and screenshot evidence. VM disks, installers, credentials, private keys, and raw diagnostic archives are outside this milestone's publication scope.
+
+## Continuing the project
+
+Keep completed change records as history. Add new findings, changes, and validation in later commits; update the roadmap and milestone report when each phase is demonstrated. See [CONTRIBUTING.md](CONTRIBUTING.md) for the evidence convention.
