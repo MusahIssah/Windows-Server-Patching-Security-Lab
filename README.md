@@ -17,14 +17,16 @@ The 91-update summaries cover the lab's selected WSUS catalog. They are **not** 
 
 ## Project phases
 
+Select a phase to view its documentation or planned work.
+
 | Phase | Scope | Status |
 |---|---|---|
-| 1 | Hyper-V networking, AD DS, DNS, WSUS, Group Policy | Completed; build summarized retrospectively |
-| 2 | Pilot, Broad, Infrastructure patch deployment and validation | Completed for selected updates |
-| 3 | Local firewall logging and domain time synchronization | Completed within the documented test scope |
-| 4 | Vulnerability scanning, prioritization, remediation, rescan | Planned |
-| 5 | Central log collection, alerts, recurring review | Planned |
-| 6 | Configuration Manager / MECM deployment | Planned |
+| [**Phase 1 — Lab foundation**](02-Build-Notes/README.md) | Hyper-V networking, AD DS, DNS, WSUS, Group Policy | Completed; build summarized retrospectively |
+| [**Phase 2 — Patch management**](03-Patch-Management/README.md) | Pilot, Broad, Infrastructure patch deployment and validation | Completed for selected updates |
+| [**Phase 3 — Local monitoring**](05-Monitoring/README.md) | Local firewall logging and domain time synchronization | Completed within the documented test scope |
+| [**Phase 4 — Vulnerability assessment**](04-Vulnerability-Remediation/README.md) | Vulnerability scanning, prioritization, remediation, rescan | Planned |
+| [**Phase 5 — Central monitoring**](ROADMAP.md#later-phase--central-monitoring) | Central log collection, alerts, recurring review | Planned |
+| [**Phase 6 — Configuration Manager / MECM**](ROADMAP.md#later-phase--configuration-manager--mecm) | Configuration Manager / MECM deployment | Planned |
 
 See the [roadmap](ROADMAP.md) for remaining work and milestone criteria.
 
