@@ -1,0 +1,77 @@
+name: Repair publication layout
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publication-layout
+  cancel-in-progress: false
+
+jobs:
+  organize:
+    if: github.repository == 'MusahIssah/Windows-Server-Patching-Security-Lab' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore overview, organize evidence, and validate links
+        shell: python
+        run: |
+          import base64
+          import hashlib
+          import pathlib
+          import re
+          import subprocess
+          import urllib.parse
+
+          root = pathlib.Path.cwd()
+          evidence = root / '06-Evidence'
+          screenshots = sorted(root.glob('*.png'))
+          before = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in screenshots}
+          if screenshots:
+              readme = root / 'README.md'
+              if not readme.read_text(encoding='utf-8').startswith('# Published evidence'):
+                  raise SystemExit('Unexpected root README; review before moving files.')
+              evidence.mkdir(exist_ok=True)
+              destinations = [evidence / p.name for p in screenshots] + [evidence / 'README.md']
+              if any(p.exists() for p in destinations):
+                  raise SystemExit('An evidence destination already exists; nothing was moved.')
+              readme.rename(evidence / 'README.md')
+              for source in screenshots:
+                  source.rename(evidence / source.name)
+              readme.write_bytes(base64.b64decode('IyBXaW5kb3dzIFNlcnZlciBQYXRjaGluZyBhbmQgU2VjdXJpdHkgTGFiCgpBIHBlcnNvbmFsIEh5cGVyLVYgbGFiIGRlbW9uc3RyYXRpbmcgc3RhZ2VkIFdpbmRvd3MgU2VydmVyIHBhdGNoaW5nLCBpbnZlc3RpZ2F0aW9uIG9mIHNlcnZpY2luZyBmYWlsdXJlcywgZmlyZXdhbGwgbG9nZ2luZywgYW5kIGRvbWFpbiB0aW1lIHN5bmNocm9uaXphdGlvbi4KCioqQ3VycmVudCBtaWxlc3RvbmU6IHYwLjEg4oCUIGZvdW5kYXRpb24sIHBhdGNoaW5nLCBhbmQgbG9jYWwgbW9uaXRvcmluZyBiYXNlbGluZS4qKiBGdXJ0aGVyIHBoYXNlcyB3aWxsIGV4dGVuZCB0aGlzIHNhbWUgcmVwb3NpdG9yeS4KCiMjIFJlc3VsdHMgZGVtb25zdHJhdGVkCgotIEJ1aWx0IGEgZm91ci1zZXJ2ZXIgV2luZG93cyBTZXJ2ZXIgMjAyMiBkb21haW4gd2l0aCBBRCBEUywgRE5TLCBXU1VTLCBhbmQgR3JvdXAgUG9saWN5LgotIERlcGxveWVkIHNlbGVjdGVkIE9TIGFuZCAuTkVUIHVwZGF0ZXMgdGhyb3VnaCBQaWxvdCwgQnJvYWQsIGFuZCBJbmZyYXN0cnVjdHVyZSBncm91cHMuCi0gVmVyaWZpZWQgYWxsIGZvdXIgc2VydmVycyBhdCBPUyBidWlsZCAqKjIwMzQ4LjU3NjEqKiwgd2l0aCB0aGVpciBmaW5hbCByZWNvcmRlZCBXU1VTIHN1bW1hcmllcyBzaG93aW5nICoqMCBuZWVkZWQsIDkxIGluc3RhbGxlZC9ub3QgYXBwbGljYWJsZSwgMCBlcnJvcnMsIGFuZCAwIHVua25vd24qKiBwZXIgc2VydmVyLgotIEludmVzdGlnYXRlZCBhIERDMDEgdXBkYXRlIHJvbGxiYWNrIHVzaW5nIENCUywgU2V0dXBBUEksIHBhY2thZ2UgaW52ZW50b3J5LCBJTkYgaGFzaGVzLCBhbmQgRElTTSBkaWFnbm9zdGljczsgc3Vic2VxdWVudGx5IGNvbXBsZXRlZCB0aGUgdXBkYXRlIHRocm91Z2ggYSBzdGFnZWQgc2VydmljaW5nIHBhdGguCi0gRW5hYmxlZCBmaXJld2FsbCBsb2dnaW5nIHRocm91Z2ggR3JvdXAgUG9saWN5IG9uIFNSVjAxIGFuZCBTUlYwMiBhbmQgdmVyaWZpZWQgcmVhbCBsb2cgZW50cmllcy4KLSBWZXJpZmllZCBtZW1iZXItc2VydmVyIGRvbWFpbiB0aW1lIHNlbGVjdGlvbiBhZnRlciByZXN0YXJ0cyBhbmQgb2JzZXJ2ZWQgREMwMSByZWNvdmVyIGF1dG9tYXRpY2FsbHkgZnJvbSBhIHN0YXJ0dXAgRE5TLXJlc29sdXRpb24gZmFpbHVyZS4KClRoZSA5MS11cGRhdGUgc3VtbWFyaWVzIGNvdmVyIHRoZSBsYWIncyBzZWxlY3RlZCBXU1VTIGNhdGFsb2cuIFRoZXkgYXJlICoqbm90KiogYSBjb21wbGV0ZSB2dWxuZXJhYmlsaXR5IGFzc2Vzc21lbnQgb3IgYSBmb3JtYWwgY29tcGxpYW5jZSBzY29yZS4gUmVzdWx0cyBhcmUgcmVjb3JkZWQgb2JzZXJ2YXRpb25zIGZyb20gT2N0b2JlciAyMDI2LCBub3QgYSBjbGFpbSBvZiBwZXJwZXR1YWwgcGF0Y2ggY3VycmVuY3kuCgojIyBQcm9qZWN0IHBoYXNlcwoKfCBQaGFzZSB8IFNjb3BlIHwgU3RhdHVzIHwKfC0tLXwtLS18LS0tfAp8IDEgfCBIeXBlci1WIG5ldHdvcmtpbmcsIEFEIERTLCBETlMsIFdTVVMsIEdyb3VwIFBvbGljeSB8IENvbXBsZXRlZDsgYnVpbGQgc3VtbWFyaXplZCByZXRyb3NwZWN0aXZlbHkgfAp8IDIgfCBQaWxvdCwgQnJvYWQsIEluZnJhc3RydWN0dXJlIHBhdGNoIGRlcGxveW1lbnQgYW5kIHZhbGlkYXRpb24gfCBDb21wbGV0ZWQgZm9yIHNlbGVjdGVkIHVwZGF0ZXMgfAp8IDMgfCBMb2NhbCBmaXJld2FsbCBsb2dnaW5nIGFuZCBkb21haW4gdGltZSBzeW5jaHJvbml6YXRpb24gfCBDb21wbGV0ZWQgd2l0aGluIHRoZSBkb2N1bWVudGVkIHRlc3Qgc2NvcGUgfAp8IDQgfCBWdWxuZXJhYmlsaXR5IHNjYW5uaW5nLCBwcmlvcml0aXphdGlvbiwgcmVtZWRpYXRpb24sIHJlc2NhbiB8IFBsYW5uZWQgfAp8IDUgfCBDZW50cmFsIGxvZyBjb2xsZWN0aW9uLCBhbGVydHMsIHJlY3VycmluZyByZXZpZXcgfCBQbGFubmVkIHwKfCA2IHwgQ29uZmlndXJhdGlvbiBNYW5hZ2VyIC8gTUVDTSBkZXBsb3ltZW50IHwgUGxhbm5lZCB8CgpTZWUgdGhlIFtyb2FkbWFwXShST0FETUFQLm1kKSBmb3IgcmVtYWluaW5nIHdvcmsgYW5kIG1pbGVzdG9uZSBjcml0ZXJpYS4KCiMjIEFyY2hpdGVjdHVyZQoKfCBTeXN0ZW0gfCBBZGRyZXNzIHwgUm9sZSB8IFdTVVMgZ3JvdXAgfAp8LS0tfC0tLXwtLS18LS0tfAp8IERDMDEgfCAxOTIuMTY4Ljc3LjEwIHwgQUQgRFMsIEROUywgUERDIEVtdWxhdG9yIHwgSW5mcmFzdHJ1Y3R1cmUgfAp8IFdTVVMwMSB8IDE5Mi4xNjguNzcuMjAgfCBXU1VTLCBJSVMsIFdpbmRvd3MgSW50ZXJuYWwgRGF0YWJhc2UgfCBJbmZyYXN0cnVjdHVyZSB8CnwgU1JWMDEgfCAxOTIuMTY4Ljc3LjEwMSB8IE1lbWJlciBzZXJ2ZXIgfCBQaWxvdCB8CnwgU1JWMDIgfCAxOTIuMTY4Ljc3LjEwMiB8IE1lbWJlciBzZXJ2ZXIgfCBCcm9hZCB8CgpEb21haW46IGBhZC5ub3J0aHN0YXIudGVzdGAgwrcgSHlwZXItViBpbnRlcm5hbCBzd2l0Y2g6IGBQYXRjaExhYi1JbnRlcm5hbGAgwrcgSG9zdCBnYXRld2F5L05BVDogYDE5Mi4xNjguNzcuMWAuCgpgYGBtZXJtYWlkCmZsb3djaGFydCBURAogICAgSG9zdFtIeXBlci1WIGhvc3QgLyBOQVQgMTkyLjE2OC43Ny4xXSAtLS0gU3dpdGNoW1BhdGNoTGFiLUludGVybmFsIC8gMTkyLjE2OC43Ny4wLzI0XQogICAgU3dpdGNoIC0tLSBEQ1tEQzAxIC8gQUQgRFMgKyBETlMgLyAuMTBdCiAgICBTd2l0Y2ggLS0tIFdTVVNbV1NVUzAxIC8gLjIwXQogICAgU3dpdGNoIC0tLSBQaWxvdFtTUlYwMSAvIFBpbG90IC8gLjEwMV0KICAgIFN3aXRjaCAtLS0gQnJvYWRbU1JWMDIgLyBCcm9hZCAvIC4xMDJdCiAgICBXU1VTIC0uIFVwZGF0ZSBhcHByb3ZhbHMgYW5kIHJlcG9ydGluZyAuLT4gUGlsb3QKICAgIFdTVVMgLS4gVXBkYXRlIGFwcHJvdmFscyBhbmQgcmVwb3J0aW5nIC4tPiBCcm9hZAogICAgV1NVUyAtLiBJbmZyYXN0cnVjdHVyZSB1cGRhdGVzIC4tPiBEQwpgYGAKCkRldGFpbHM6IFthcmNoaXRlY3R1cmVdKDAxLUFyY2hpdGVjdHVyZS9SRUFETUUubWQpIGFuZCBbYnVpbGQgbm90ZXNdKDAyLUJ1aWxkLU5vdGVzL1JFQURNRS5tZCkuCgojIyBSZWFkIHRoZSBjb21wbGV0ZWQgd29yawoKfCBBcmVhIHwgRG9jdW1lbnRhdGlvbiB8CnwtLS18LS0tfAp8IFN0YWdlZCBwYXRjaGluZyBhbmQgZGVsaXZlcnkgc291cmNlcyB8IFtDaGFuZ2UgcmVnaXN0ZXJdKDAzLVBhdGNoLU1hbmFnZW1lbnQvUkVBRE1FLm1kKSB8CnwgU2VydmljaW5nIHJvbGxiYWNrIGludmVzdGlnYXRpb24gfCBbREMwMSBjYXNlIHN0dWR5XSgwMi1CdWlsZC1Ob3Rlcy9EQzAxLVNlcnZpY2luZy1JbnZlc3RpZ2F0aW9uLm1kKSB8CnwgRmlyZXdhbGwgcG9saWN5IGFuZCB0cmFmZmljIHZhbGlkYXRpb24gfCBbTEFCLUNIRy0wMDZdKDA1LU1vbml0b3JpbmcvTEFCLUNIRy0wMDYubWQpIHwKfCBEb21haW4gdGltZSBjb25maWd1cmF0aW9uIGFuZCByZXN0YXJ0IHRlc3RpbmcgfCBbTEFCLUNIRy0wMDldKDA1LU1vbml0b3JpbmcvTEFCLUNIRy0wMDkubWQpIHwKfCBTY3JlZW5zaG90cyBvcmdhbml6ZWQgYnkgb3V0Y29tZSB8IFtFdmlkZW5jZSBpbmRleF0oMDYtRXZpZGVuY2UvUkVBRE1FLm1kKSB8CnwgQ3VycmVudCByZXN1bHRzIGFjcm9zcyB0aGUgcHJvamVjdCB8IFtNaWxlc3RvbmUgcmVwb3J0XSgwNy1GaW5hbC1SZXBvcnQvUkVBRE1FLm1kKSB8CgojIyMgRXhhbXBsZSBldmlkZW5jZQoKREMwMSdzIGZpbmFsIHJlY29yZGVkIEluZnJhc3RydWN0dXJlIHN1bW1hcnk6CgohW0RDMDEgV1NVUyBzdW1tYXJ5IHNob3dpbmcgemVybyBuZWVkZWQgdXBkYXRlcyBhbmQgemVybyBlcnJvcnNdKDA2LUV2aWRlbmNlL0RDMDEtSW5mcmFzdHJ1Y3R1cmUtRmluYWwtWmVyby1OZWVkZWQucG5nKQoKUGlsb3QgbWVtYmVyLXNlcnZlciB0aW1lIHNlbGVjdGlvbiBhZnRlciBhIHJlc3RhcnQ6CgohW1NSVjAxIHNlbGVjdHMgREMwMSBhcyBpdHMgdGltZSBzb3VyY2UgYWZ0ZXIgcmVzdGFydF0oMDYtRXZpZGVuY2UvU1JWMDEtRG9tYWluLVRpbWUtQWZ0ZXItUmVzdGFydC5wbmcpCgojIyBEZWxpdmVyeSBtZXRob2RzIGFuZCBsaW1pdGF0aW9ucwoKVGhlIGRlcGxveW1lbnQgc291cmNlcyBhcmUgcmVjb3JkZWQgZXhwbGljaXRseTogT2N0b2JlcidzIE9TIHVwZGF0ZSB1c2VkIHN0YW5kYWxvbmUgTWljcm9zb2Z0IENhdGFsb2cgcGFja2FnZXMgb24gU1JWMDEvU1JWMDIsIHdoaWxlIGZpbmFsIE9jdG9iZXIgaW5zdGFsbGF0aW9uIG9uIFdTVVMwMS9EQzAxIHN1Y2NlZWRlZCB0aHJvdWdoIFdTVVMuIFRoZSBpbml0aWFsIE9jdG9iZXIgZGV0ZWN0aW9uIGlzc3VlIG9uIFNSVjAxL1NSVjAyIHJlbWFpbnMgdW5leHBsYWluZWQuCgpEQzAxJ3MgZWFybGllciBzdGFuZGFsb25lIE9jdG9iZXIgYXR0ZW1wdCByb2xsZWQgYmFjayBkdXJpbmcgZHJpdmVyIHByb2Nlc3NpbmcuIEluc3RhbGxpbmcgU2VwdGVtYmVyIGFuZCB0aGVuIHJldHJ5aW5nIE9jdG9iZXIgc3VjY2VlZGVkLCBidXQgdGhpcyBzZXF1ZW5jZSBkb2VzIG5vdCBwcm92ZSBhIHVuaXZlcnNhbCBwcmVyZXF1aXNpdGUgb3IgYSBkcml2ZXIgcmVwYWlyLiBBIHJlamVjdGVkIFBuUFV0aWwgYXR0ZW1wdCBhZGRlZCBubyBwYWNrYWdlcy4KClRpbWUgdmVyaWZpY2F0aW9uIGNvdmVycyBvYnNlcnZlZCBzb3VyY2Ugc2VsZWN0aW9uIGFuZCByZXN0YXJ0cywgbm90IGEgcHJlY2lzaW9uLXRpbWUgZ3VhcmFudGVlLiBGaXJld2FsbCB2YWxpZGF0aW9uIGNvdmVycyBsb2NhbCBsb2cgZ2VuZXJhdGlvbiBvbiB0d28gc2VydmVyczsgY2VudHJhbCBjb2xsZWN0aW9uIGFuZCBhbGVydGluZyBhcmUgcGxhbm5lZC4gTm8gYXBwbGljYXRpb24gd29ya2xvYWQgd2FzIGNvbmZpZ3VyZWQgZm9yIGFwcGxpY2F0aW9uIGNvbXBhdGliaWxpdHkgdGVzdGluZywgYW5kIGJhY2t1cCByZXN0b3JhdGlvbiB3YXMgbm90IHRlc3RlZC4KClRoaXMgcmVwb3NpdG9yeSBwdWJsaXNoZXMgZG9jdW1lbnRhdGlvbiBhbmQgc2NyZWVuc2hvdCBldmlkZW5jZS4gVk0gZGlza3MsIGluc3RhbGxlcnMsIGNyZWRlbnRpYWxzLCBwcml2YXRlIGtleXMsIGFuZCByYXcgZGlhZ25vc3RpYyBhcmNoaXZlcyBhcmUgb3V0c2lkZSB0aGlzIG1pbGVzdG9uZSdzIHB1YmxpY2F0aW9uIHNjb3BlLgoKIyMgQ29udGludWluZyB0aGUgcHJvamVjdAoKS2VlcCBjb21wbGV0ZWQgY2hhbmdlIHJlY29yZHMgYXMgaGlzdG9yeS4gQWRkIG5ldyBmaW5kaW5ncywgY2hhbmdlcywgYW5kIHZhbGlkYXRpb24gaW4gbGF0ZXIgY29tbWl0czsgdXBkYXRlIHRoZSByb2FkbWFwIGFuZCBtaWxlc3RvbmUgcmVwb3J0IHdoZW4gZWFjaCBwaGFzZSBpcyBkZW1vbnN0cmF0ZWQuIFNlZSBbQ09OVFJJQlVUSU5HLm1kXShDT05UUklCVVRJTkcubWQpIGZvciB0aGUgZXZpZGVuY2UgY29udmVudGlvbi4K'))
+              (root / '.gitignore').write_bytes(base64.b64decode('IyBSdW50aW1lIGFydGlmYWN0cyBhbmQgY3JlZGVudGlhbHMgYXJlIG5vdCBwdWJsaWNhdGlvbiBhcnRpZmFjdHMuCioudmhkCioudmhkeAoqLmF2aGR4Cioudm1kawoqLmlzbwoqLm1zdQoqLmNhYgoqLmV4ZQoqLnppcAoqLmxvZwoqLmV0bAoqLmV2dHgKKi5kbXAKKi5wZW0KKi5rZXkKKi5wZngKKi5wMTIKLmVudgouZW52LioKY3JlZGVudGlhbHMqCnNlY3JldHMqClRodW1icy5kYgpkZXNrdG9wLmluaQo='))
+              (root / '.gitattributes').write_bytes(base64.b64decode('KiB0ZXh0PWF1dG8KKi5tZCB0ZXh0IGVvbD1sZgoqLnBuZyBiaW5hcnkK'))
+              for name, digest in before.items():
+                  assert hashlib.sha256((evidence / name).read_bytes()).hexdigest() == digest, name
+              changelog = root / 'CHANGELOG.md'
+              text = changelog.read_text(encoding='utf-8')
+              text = text.replace('Publication editing reconciles LAB-CHG-005\u2019s final count table with its zero-needed follow-up.', 'Publication editing labels LAB-CHG-005\u2019s 21/70 table as an intermediate result and retains its later zero-needed follow-up.')
+              text = text.replace("Publication editing reconciles LAB-CHG-005's final count table with its zero-needed follow-up.", "Publication editing labels LAB-CHG-005's 21/70 table as an intermediate result and retains its later zero-needed follow-up.")
+              text += '\n## Publication layout repair\n\n- Restore the project overview at the repository root.\n- Move all 136 uploaded screenshots and their index into `06-Evidence`.\n- Preserve screenshot contents and filenames; verify local documentation links.\n'
+              changelog.write_text(text, encoding='utf-8')
+          failures = []
+          for document in root.rglob('*.md'):
+              if '.git' in document.parts:
+                  continue
+              for link in re.findall(r'\]\(([^)]+)\)', document.read_text(encoding='utf-8')):
+                  link = link.strip().strip('<>')
+                  if urllib.parse.urlsplit(link).scheme or link.startswith('#'):
+                      continue
+                  target = urllib.parse.unquote(link.split('#', 1)[0])
+                  if not (document.parent / target).exists():
+                      failures.append(f'{document.relative_to(root)}: {link}')
+          if failures:
+              raise SystemExit('\n'.join(failures))
+          assert len(list(evidence.glob('*.png'))) == 136, 'Expected 136 evidence screenshots'
+          print(f'Checked documentation links; preserved {len(before)} moved screenshots.')
+          subprocess.run(['git', 'config', 'user.name', 'github-actions[bot]'], check=True)
+          subprocess.run(['git', 'config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com'], check=True)
+          subprocess.run(['git', 'add', '--all'], check=True)
+          if subprocess.run(['git', 'diff', '--cached', '--quiet']).returncode:
+              subprocess.run(['git', 'commit', '-m', 'Restore project overview and organize evidence screenshots'], check=True)
+              subprocess.run(['git', 'push', 'origin', 'HEAD:main'], check=True)
+          else:
+              print('Publication layout is already organized; no commit needed.')
