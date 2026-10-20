@@ -1,0 +1,37 @@
+name: Validate documentation links
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check local documentation and evidence links
+        shell: python
+        run: |
+          import pathlib
+          import re
+          import urllib.parse
+
+          root = pathlib.Path.cwd()
+          failures = []
+          count = 0
+          for document in root.rglob('*.md'):
+              if '.git' in document.parts:
+                  continue
+              for link in re.findall(r'\]\(([^)]+)\)', document.read_text(encoding='utf-8')):
+                  link = link.strip().strip('<>')
+                  if urllib.parse.urlsplit(link).scheme or link.startswith('#'):
+                      continue
+                  count += 1
+                  target = urllib.parse.unquote(link.split('#', 1)[0])
+                  if not (document.parent / target).exists():
+                      failures.append(f'{document.relative_to(root)}: {link}')
+          if failures:
+              raise SystemExit('\n'.join(failures))
+          print(f'All {count} local documentation and image links resolve.')
