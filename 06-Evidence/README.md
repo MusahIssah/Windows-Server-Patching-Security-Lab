@@ -4,6 +4,10 @@ These screenshots support the recorded lab observations. Intermediate failures a
 
 Generic, unidentified screenshot filenames were omitted. Original files remain in the source archive. Three filenames with a doubled period before `.png` were normalized in this publication copy. Suggested filenames in historical records are not a guarantee that every capture was saved.
 
+## Phase 4 — credentialed assessment and staged hardening
+
+See the [Phase 4 evidence index](Phase-4-Vulnerability-Assessment/README.md) for Pilot/Broad baseline findings, policy application, and final authenticated scans. DC01/WSUS01 assessment remains pending.
+
 ## Start here
 
 | Outcome | Evidence |
