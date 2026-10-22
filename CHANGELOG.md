@@ -1,5 +1,12 @@
 # Changelog
 
+## Phase 4 progress — October 21, 2026
+
+- Record credentialed SRV01/SRV02 baseline scans and three selected configuration findings.
+- Document LAB-CHG-010: individual Pilot fixes, hardening GPO, Broad rollout, and authenticated rescan evidence.
+- Add reviewed screenshot evidence, clarify grouped-search limitations, and record unavailable raw export.
+- Keep Phase 4 in progress with DC01 and WSUS01 assessment pending.
+
 ## v0.1 — Prepared for first publication, October 20, 2026
 
 - Document four-server Hyper-V architecture and WSUS policy design.

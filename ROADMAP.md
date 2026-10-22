@@ -12,15 +12,19 @@
 - [x] Domain time selection and member-server restart verification.
 - [x] Document known limitations and open observations.
 
-## Next phase — Vulnerability assessment
+## Phase 4 — Vulnerability assessment (in progress)
 
-- [ ] Select a scanner and document its version, feed date, and scan scope.
-- [ ] Establish credentialed scanning and confirm coverage.
-- [ ] Capture baseline findings and prioritize by evidence and impact.
-- [ ] Remediate selected findings through recorded changes.
-- [ ] Rescan and compare results, retaining unresolved findings.
+- [x] Record Nessus 10.12.4/build 20038, feed 202609212044, and scan scope.
+- [x] Establish and verify credentialed scanning on SRV01 and SRV02.
+- [x] Capture baseline findings and validate three selected fixes on Pilot.
+- [x] Deploy the tested hardening GPO to Broad and verify resultant policy.
+- [x] Capture credentialed rescans with the selected findings no longer detected.
+- [ ] Assess WSUS01 with role-specific validation.
+- [ ] Establish an appropriate DC01 credential plan and assess DC01.
+- [ ] Validate applicable infrastructure remediations separately.
+- [ ] Test recovery and representative application compatibility.
 
-No scanner-based vulnerability results have been collected for this milestone. Firewall logging is a configuration improvement, not a CVE remediation claim.
+See the [Phase 4 report](04-Vulnerability-Remediation/README.md). Evidence is screenshots; raw scan export was unavailable. Infrastructure assessment is pending, so Phase 4 is not complete.
 
 ## Later phase — Central monitoring
 

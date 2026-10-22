@@ -2,7 +2,7 @@
 
 A personal Hyper-V lab demonstrating staged Windows Server patching, investigation of servicing failures, firewall logging, and domain time synchronization.
 
-**Current milestone: v0.1 — foundation, patching, and local monitoring baseline.** Further phases will extend this same repository.
+**Current work: Phase 4 — credentialed assessment and staged hardening.** SRV01/Pilot and SRV02/Broad validation is complete for three selected findings; DC01 and WSUS01 assessment remains pending. The v0.1 patching and monitoring baseline is retained as history.
 
 ## Results demonstrated
 
@@ -15,6 +15,8 @@ A personal Hyper-V lab demonstrating staged Windows Server patching, investigati
 
 The 91-update summaries cover the lab's selected WSUS catalog. They are **not** a complete vulnerability assessment or a formal compliance score. Results are recorded observations from October 2026, not a claim of perpetual patch currency.
 
+- Validated three selected Nessus findings on SRV01 and SRV02 through credentialed rescans after a staged hardening GPO rollout. See the [Phase 4 report](04-Vulnerability-Remediation/README.md) for scope, evidence, and limitations.
+
 ## Project phases
 
 Select a phase to view its documentation or planned work.
@@ -24,7 +26,7 @@ Select a phase to view its documentation or planned work.
 | [**Phase 1 — Lab foundation**](02-Build-Notes/README.md) | Hyper-V networking, AD DS, DNS, WSUS, Group Policy | Completed; build summarized retrospectively |
 | [**Phase 2 — Patch management**](03-Patch-Management/README.md) | Pilot, Broad, Infrastructure patch deployment and validation | Completed for selected updates |
 | [**Phase 3 — Local monitoring**](05-Monitoring/README.md) | Local firewall logging and domain time synchronization | Completed within the documented test scope |
-| [**Phase 4 — Vulnerability assessment**](04-Vulnerability-Remediation/README.md) | Vulnerability scanning, prioritization, remediation, rescan | Planned |
+| [**Phase 4 — Vulnerability assessment**](04-Vulnerability-Remediation/README.md) | Vulnerability scanning, prioritization, remediation, rescan | In progress — Pilot/Broad selected findings validated; infrastructure pending |
 | [**Phase 5 — Central monitoring**](ROADMAP.md#later-phase--central-monitoring) | Central log collection, alerts, recurring review | Planned |
 | [**Phase 6 — Configuration Manager / MECM**](ROADMAP.md#later-phase--configuration-manager--mecm) | Configuration Manager / MECM deployment | Planned |
 
@@ -63,6 +65,7 @@ Details: [architecture](01-Architecture/README.md) and [build notes](02-Build-No
 | Servicing rollback investigation | [DC01 case study](02-Build-Notes/DC01-Servicing-Investigation.md) |
 | Firewall policy and traffic validation | [LAB-CHG-006](05-Monitoring/LAB-CHG-006.md) |
 | Domain time configuration and restart testing | [LAB-CHG-009](05-Monitoring/LAB-CHG-009.md) |
+| Credentialed scanning and Pilot-to-Broad hardening | [Phase 4 / LAB-CHG-010](04-Vulnerability-Remediation/README.md) |
 | Screenshots organized by outcome | [Evidence index](06-Evidence/README.md) |
 | Current results across the project | [Milestone report](07-Final-Report/README.md) |
 
