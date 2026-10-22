@@ -1,4 +1,4 @@
-# v0.1 milestone report
+# Project milestone report
 
 This is an interim report for the completed phases, not the final report for all planned project work.
 
@@ -34,6 +34,12 @@ Pre-restart success does not prove an update finalized. DC01's rollback was foun
 
 An active time peer does not prove it is the selected source. Likewise, an empty managed-update scan does not prove complete patch coverage. Freshness and scope matter when interpreting both.
 
+## Phase 4 — selected member-server findings validated
+
+On October 21, 2026, credentialed Nessus scans identified certificate-padding, SMB-signing, and Intel BHI configuration findings on both member servers. Individual fixes were tested on SRV01, captured in LAB - Server Security Hardening, verified through resultant Group Policy, and rolled out to SRV02/Broad. Final scans showed Informational results, Auth: Pass, and credentialed checks via SMB. The selected findings were no longer detected within the recorded policy/feed scope.
+
+Scanner: 10.12.4/build 20038; feed: 202609212044. Raw export was unavailable; screenshots support the record. Host/firmware protection, full application compatibility, and recovery were not established. See the [assessment, LAB-CHG-010, and evidence](../04-Vulnerability-Remediation/README.md).
+
 ## Remaining work
 
-Vulnerability scanning, central monitoring/alerting, Configuration Manager, and backup-restoration testing remain outstanding. The original Pilot/Broad October detection issue, the precise DC01 driver rollback cause, and the initial startup DNS failure cause remain unconfirmed. See [ROADMAP.md](../ROADMAP.md).
+DC01 and WSUS01 vulnerability assessment, central monitoring/alerting, Configuration Manager, and backup-restoration testing remain outstanding. The original Pilot/Broad October detection issue, the precise DC01 driver rollback cause, and the initial startup DNS failure cause remain unconfirmed. See [ROADMAP.md](../ROADMAP.md).
