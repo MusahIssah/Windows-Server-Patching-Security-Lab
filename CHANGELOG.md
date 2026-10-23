@@ -1,5 +1,12 @@
 # Changelog
 
+## DC01 assessment and GRC tracking — October 23, 2026
+
+- Document the limited-account scan, access investigation, and successful privileged baseline.
+- Record LAB-CHG-012 WinVerifyTrust and LAB-CHG-013 targeted BHI mitigation, both verified through configuration evidence and authenticated rescans.
+- Add 50 screenshots, an evidence-linked Excel register, historical scores, and operator-confirmed credential cleanup.
+- Keep unresolved historical observations and remaining monitoring/recovery/delivery validation explicit.
+
 ## WSUS01 assessment and remediation — October 22, 2026
 
 - Document LAB-CHG-011: credentialed baseline, three selected findings, scoped WSUS01 hardening GPO, and successful resultant settings.

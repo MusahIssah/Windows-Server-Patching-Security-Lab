@@ -2,7 +2,7 @@
 
 A personal Hyper-V lab demonstrating staged Windows Server patching, investigation of servicing failures, firewall logging, and domain time synchronization.
 
-**Current work: Phase 4 — credentialed assessment and staged hardening.** SRV01/Pilot, SRV02/Broad, and WSUS01 validation is complete for three selected findings on each target; DC01 assessment remains pending. The v0.1 patching and monitoring baseline is retained as history.
+**Current work: Phase 4 — credentialed assessment and staged hardening.** SRV01/Pilot, SRV02/Broad, and WSUS01 validation is complete for three selected findings on each target; DC01 has two selected findings verified remediated, with an evidence-linked Excel register. The v0.1 patching and monitoring baseline is retained as history.
 
 ## Results demonstrated
 
@@ -26,7 +26,7 @@ Select a phase to view its documentation or planned work.
 | [**Phase 1 — Lab foundation**](02-Build-Notes/README.md) | Hyper-V networking, AD DS, DNS, WSUS, Group Policy | Completed; build summarized retrospectively |
 | [**Phase 2 — Patch management**](03-Patch-Management/README.md) | Pilot, Broad, Infrastructure patch deployment and validation | Completed for selected updates |
 | [**Phase 3 — Local monitoring**](05-Monitoring/README.md) | Local firewall logging and domain time synchronization | Completed within the documented test scope |
-| [**Phase 4 — Vulnerability assessment**](04-Vulnerability-Remediation/README.md) | Vulnerability scanning, prioritization, remediation, rescan | In progress — Pilot/Broad and WSUS01 selected findings validated; DC01 pending |
+| [**Phase 4 — Vulnerability assessment**](04-Vulnerability-Remediation/README.md) | Vulnerability scanning, prioritization, remediation, rescan | Selected findings validated on all four targets; remaining validation tasks tracked |
 | [**Phase 5 — Central monitoring**](ROADMAP.md#later-phase--central-monitoring) | Central log collection, alerts, recurring review | Planned |
 | [**Phase 6 — Configuration Manager / MECM**](ROADMAP.md#later-phase--configuration-manager--mecm) | Configuration Manager / MECM deployment | Planned |
 
@@ -67,6 +67,7 @@ Details: [architecture](01-Architecture/README.md) and [build notes](02-Build-No
 | Domain time configuration and restart testing | [LAB-CHG-009](05-Monitoring/LAB-CHG-009.md) |
 | Credentialed scanning and Pilot-to-Broad hardening | [Phase 4 / LAB-CHG-010](04-Vulnerability-Remediation/README.md) |
 | WSUS01 assessment and role validation | [LAB-CHG-011](04-Vulnerability-Remediation/LAB-CHG-011-WSUS01-Hardening.md) |
+| DC01 assessment, risk tracking, and scoped remediation | [LAB-CHG-012 / 013](04-Vulnerability-Remediation/LAB-CHG-012-013-DC01-Hardening.md) · [Excel register](04-Vulnerability-Remediation/DC01-Vulnerability-Tracker.xlsx) |
 | Screenshots organized by outcome | [Evidence index](06-Evidence/README.md) |
 | Current results across the project | [Milestone report](07-Final-Report/README.md) |
 
