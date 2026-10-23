@@ -1,5 +1,9 @@
 # Published evidence
 
+## DC01 — October 23, 2026
+
+[DC01 evidence index: 50 screenshots](Phase-4-Vulnerability-Assessment/DC01/README.md) supports two selected verified remediations and the [Excel register](../04-Vulnerability-Remediation/DC01-Vulnerability-Tracker.xlsx). Prior dated evidence remains historical.
+
 These screenshots support the recorded lab observations. Intermediate failures and earlier counts are retained as history; the final results are summarized in the [milestone report](../07-Final-Report/README.md).
 
 Generic, unidentified screenshot filenames were omitted. Original files remain in the source archive. Three filenames with a doubled period before `.png` were normalized in this publication copy. Suggested filenames in historical records are not a guarantee that every capture was saved.
