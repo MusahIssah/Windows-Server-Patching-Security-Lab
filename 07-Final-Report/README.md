@@ -46,6 +46,12 @@ WSUS01's credentialed baseline identified the same three selected findings. A se
 
 After restart, services were confirmed running by the operator. Screenshots demonstrate console connection and a new successful synchronization at 7:23 PM in the console's displayed time context. New client update delivery and recovery were not tested. The feed changed from 202609222109 to 202609232334 between scans, so count changes are not an isolated measure of remediation. See [LAB-CHG-011 and its evidence](../04-Vulnerability-Remediation/LAB-CHG-011-WSUS01-Hardening.md).
 
+## DC01 assessment and GRC tracking — October 23, 2026
+
+The initial limited-account scan lacked privileged coverage. Replacing its credential with the existing domain Administrator established authenticated checks with no reported SMB privilege/access issues. A separate DC01-filtered GPO applied WinVerifyTrust and targeted BHI registry mitigations in sequential changes. Both selected findings were no longer detected after restart and authenticated verification. Final results were entirely Informational: 51 displayed groups and 235 instances; the feed remained 202609232334.
+
+The [DC01 report](../04-Vulnerability-Remediation/LAB-CHG-012-013-DC01-Hardening.md), [Excel register](../04-Vulnerability-Remediation/DC01-Vulnerability-Tracker.xlsx), and [50 screenshots](../06-Evidence/Phase-4-Vulnerability-Assessment/DC01/README.md) separate original scores, scan quality, change evidence, closure and limitations. Post-restart service/AD console checks and removal of saved privileged credentials are operator-confirmed. Physical host protection, independent approval and full recovery were not established.
+
 ## Remaining work
 
-DC01 vulnerability assessment, post-hardening client update delivery, central monitoring/alerting, Configuration Manager, and backup-restoration testing remain outstanding. The original Pilot/Broad October detection issue, the precise DC01 driver rollback cause, and the initial startup DNS failure cause remain unconfirmed. See [ROADMAP.md](../ROADMAP.md).
+Post-hardening client update delivery, central monitoring/alerting, Configuration Manager, and backup-restoration testing remain outstanding. The original Pilot/Broad October detection issue, the precise DC01 driver rollback cause, and the initial startup DNS failure cause remain unconfirmed. See [ROADMAP.md](../ROADMAP.md).
