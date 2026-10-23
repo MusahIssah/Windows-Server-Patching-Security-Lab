@@ -1,5 +1,13 @@
 # Changelog
 
+## WSUS01 assessment and remediation — October 22, 2026
+
+- Document LAB-CHG-011: credentialed baseline, three selected findings, scoped WSUS01 hardening GPO, and successful resultant settings.
+- Retain authenticated post-hardening scan evidence, console connection, and a new successful synchronization.
+- Add 32 saved screenshots; distinguish operator-confirmed service status from retained images.
+- Record different baseline/rescan feeds and unavailable raw exports; keep DC01 assessment pending.
+
+
 ## Phase 4 progress — October 21, 2026
 
 - Record credentialed SRV01/SRV02 baseline scans and three selected configuration findings.

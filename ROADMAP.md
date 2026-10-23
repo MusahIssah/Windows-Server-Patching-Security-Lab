@@ -19,12 +19,14 @@
 - [x] Capture baseline findings and validate three selected fixes on Pilot.
 - [x] Deploy the tested hardening GPO to Broad and verify resultant policy.
 - [x] Capture credentialed rescans with the selected findings no longer detected.
-- [ ] Assess WSUS01 with role-specific validation.
+- [x] Assess WSUS01; validate selected remediation, console connection, and new synchronization.
 - [ ] Establish an appropriate DC01 credential plan and assess DC01.
-- [ ] Validate applicable infrastructure remediations separately.
+- [x] Validate WSUS01 through a separate computer-filtered hardening GPO and credentialed rescan.
+- [ ] Validate applicable DC01 remediations separately.
+- [ ] Test new client update delivery after WSUS01 hardening.
 - [ ] Test recovery and representative application compatibility.
 
-See the [Phase 4 report](04-Vulnerability-Remediation/README.md). Evidence is screenshots; raw scan export was unavailable. Infrastructure assessment is pending, so Phase 4 is not complete.
+See the [Phase 4 report](04-Vulnerability-Remediation/README.md). Evidence is screenshots; raw scan export was unavailable. WSUS01 is documented in [LAB-CHG-011](04-Vulnerability-Remediation/LAB-CHG-011-WSUS01-Hardening.md). DC01 assessment is pending, so Phase 4 is not complete.
 
 ## Later phase — Central monitoring
 
