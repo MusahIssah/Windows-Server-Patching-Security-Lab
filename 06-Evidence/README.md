@@ -6,7 +6,7 @@ Generic, unidentified screenshot filenames were omitted. Original files remain i
 
 ## Phase 4 — credentialed assessment and staged hardening
 
-See the [Phase 4 evidence index](Phase-4-Vulnerability-Assessment/README.md) for Pilot/Broad baseline findings, policy application, and final authenticated scans. DC01/WSUS01 assessment remains pending.
+See the [Phase 4 evidence index](Phase-4-Vulnerability-Assessment/README.md) for Pilot/Broad baseline findings, policy application, and final authenticated scans. WSUS01 is now documented in its [own evidence index](Phase-4-Vulnerability-Assessment/WSUS01/README.md); DC01 assessment remains pending.
 
 ## Start here
 
