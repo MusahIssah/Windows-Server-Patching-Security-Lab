@@ -40,6 +40,12 @@ On October 21, 2026, credentialed Nessus scans identified certificate-padding, S
 
 Scanner: 10.12.4/build 20038; feed: 202609212044. Raw export was unavailable; screenshots support the record. Host/firmware protection, full application compatibility, and recovery were not established. See the [assessment, LAB-CHG-010, and evidence](../04-Vulnerability-Remediation/README.md).
 
+## WSUS01 assessment and hardening — October 22, 2026
+
+WSUS01's credentialed baseline identified the same three selected findings. A separate LAB - WSUS01 Security Hardening GPO was linked to Management and security-filtered to WSUS01$. Resultant policy verified SMB signing Enabled and all four registry values successfully applied. The final authenticated rescan was entirely Informational, supporting no-longer-detected status for the selected findings within its recorded scope.
+
+After restart, services were confirmed running by the operator. Screenshots demonstrate console connection and a new successful synchronization at 7:23 PM in the console's displayed time context. New client update delivery and recovery were not tested. The feed changed from 202609222109 to 202609232334 between scans, so count changes are not an isolated measure of remediation. See [LAB-CHG-011 and its evidence](../04-Vulnerability-Remediation/LAB-CHG-011-WSUS01-Hardening.md).
+
 ## Remaining work
 
-DC01 and WSUS01 vulnerability assessment, central monitoring/alerting, Configuration Manager, and backup-restoration testing remain outstanding. The original Pilot/Broad October detection issue, the precise DC01 driver rollback cause, and the initial startup DNS failure cause remain unconfirmed. See [ROADMAP.md](../ROADMAP.md).
+DC01 vulnerability assessment, post-hardening client update delivery, central monitoring/alerting, Configuration Manager, and backup-restoration testing remain outstanding. The original Pilot/Broad October detection issue, the precise DC01 driver rollback cause, and the initial startup DNS failure cause remain unconfirmed. See [ROADMAP.md](../ROADMAP.md).
