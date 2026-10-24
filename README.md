@@ -4,6 +4,10 @@ A personal Hyper-V lab demonstrating staged Windows Server patching, investigati
 
 **Current work: Phase 4 — credentialed assessment and staged hardening.** SRV01/Pilot, SRV02/Broad, and WSUS01 validation is complete for three selected findings on each target; DC01 has two selected findings verified remediated, with an evidence-linked Excel register. The v0.1 patching and monitoring baseline is retained as history.
 
+## DC01 assessment summary
+
+Start with the [one-page DC01 assessment](07-Final-Report/DC01-One-Page-Assessment.pdf) for the business impact, finding-to-evidence links, closure conclusion, and limitations. An [editable text version](07-Final-Report/DC01-One-Page-Assessment.md) is also available.
+
 ## Results demonstrated
 
 - Built a four-server Windows Server 2022 domain with AD DS, DNS, WSUS, and Group Policy.
