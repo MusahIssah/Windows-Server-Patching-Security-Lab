@@ -1,6 +1,6 @@
 # DC01 Security Remediation Assessment
 
-Personal lab assessment | Evidence date October 23, 2026 | Prepared by lab operator
+Personal lab assessment | Evidence date October 23, 2026 | Prepared by Musah Issah
 
 ## Assessment conclusion
 
@@ -24,7 +24,7 @@ The initial scan accepted SMB credentials but could not complete credentialed ch
 
 The repository retains 50 screenshots. Evidence IDs identify supporting records, Finding IDs identify the weaknesses, and Change IDs explain the remediation. Post-restart service and Active Directory checks, and removal of the saved privileged scan credential, were operator confirmed without retained screenshots. The operator implemented and verified the changes; no independent approval was recorded. Physical host protection, recovery testing, and full application compatibility were not established. An earlier unverified SMB finding remains a historical discrepancy, not a closed finding.
 
-## Disposition and follow up
+## Conclusion and next steps
 
 Retain both selected findings as closed within the documented scan scope and preserve their original scores. Review future scan results for recurrence. For a business assessment, obtain an independent review, agree remediation timeframes, and define ongoing monitoring before using this record to support a broader risk or authorization decision.
 
