@@ -2,6 +2,10 @@
 
 This is an interim report for the completed phases, not the final report for all planned project work.
 
+## DC01 one page assessment
+
+Read the [one-page assessment PDF](DC01-One-Page-Assessment.pdf) or [editable text version](DC01-One-Page-Assessment.md). It connects DC01-VULN-001 and DC01-VULN-002 to LAB-CHG-012 and LAB-CHG-013, the workbook Evidence IDs, and the supporting GitHub records. The conclusion covers the two selected lab findings and preserves the assessment limitations.
+
 ## Verified results
 
 | System | Role/group | Final verified OS build | Final recorded WSUS summary |
